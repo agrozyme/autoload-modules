@@ -1,0 +1,24 @@
+{
+  "name": "autoload-modules",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agrozyme/autoload-modules.git"
+  },
+  "engines": {
+    "node": ">=6.0.0",
+    "npm": ">=3.0.0"
+  },
+
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agrozyme/autoload-modules/issues"
+  },
+  "homepage": "https://github.com/agrozyme/autoload-modules#readme"
+}
