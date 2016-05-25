@@ -7,7 +7,6 @@ module.exports = function(options) {
     }, mapping: {}
   };
 
-  var cache = {};
   var target = {};
   var handler = {};
 
@@ -88,28 +87,12 @@ module.exports = function(options) {
     }
   };
 
-  var getFromTarget = function(target, names) {
-    let value = null;
-
-    names.every(function(name) {
-      if (target.hasOwnProperty(name)) {
-        value = target[name];
-        return false;
-      }
-
-      return true;
-    });
-
-    return value;
-  };
-
   var getFromRequire = function(target, names) {
     let value = null;
 
     names.every(function(name) {
       try {
-        target[name] = require(name);
-        value = target[name];
+        value = require(name);
         return false;
       } catch (error) {
         return true;
@@ -120,30 +103,24 @@ module.exports = function(options) {
   };
 
   handler.get = function(target, property, receiver) {
-    if (cache.hasOwnProperty(property)) {
-      return cache[property];
+    if (target.hasOwnProperty(property)) {
+      return target[property];
     }
 
-    cache[property] = getFromMapping(target, property);
+    target[property] = getFromMapping(target, property);
 
-    if (null !== cache[property]) {
-      return cache[property];
+    if (null !== target[property]) {
+      return target[property];
     }
 
     const names = getNames(property);
-    cache[property] = getFromTarget(target, names);
+    target[property] = getFromRequire(target, names);
 
-    if (null !== cache[property]) {
-      return cache[property];
+    if (null !== target[property]) {
+      return target[property];
     }
 
-    cache[property] = getFromRequire(target, names);
-
-    if (null !== cache[property]) {
-      return cache[property];
-    }
-
-    delete cache[property];
+    delete target[property];
     const error = new Error("Cannot find module '" + property + "'");
     error.code = 'MODULE_NOT_FOUND';
     throw error;
