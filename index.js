@@ -15,17 +15,41 @@ module.exports = function(options) {
     return (null !== item) && ('object' === typeof item);
   };
 
-  var setOptions = function(options) {
-    if (false === isObject(options)) {
+  var setMapping = function(items) {
+    if (false === isObject(items)) {
       return;
     }
 
-    if (options.hasOwnProperty('guessName') && ('function' === typeof options.guessName)) {
-      useOptions.guessName = options.guessName;
+    Object.keys(items).every(function(index) {
+      let item = items[index];
+
+      switch (typeof item) {
+        case 'string':
+          useOptions.mapping[index] = item;
+          break;
+
+        case 'object':
+        case 'function':
+          target[index] = item;
+          break;
+
+        default:
+          break;
+      }
+    });
+  };
+
+  var setOptions = function(items) {
+    if (false === isObject(items)) {
+      return;
     }
 
-    if (options.hasOwnProperty('mapping') && isObject(options.mapping)) {
-      useOptions.mapping = options.mapping;
+    if (items.hasOwnProperty('guessName') && ('function' === typeof items.guessName)) {
+      useOptions.guessName = items.guessName;
+    }
+
+    if (items.hasOwnProperty('mapping')) {
+      setMapping(items.mapping);
     }
   };
 
@@ -54,10 +78,6 @@ module.exports = function(options) {
 
     if (false === items.hasOwnProperty(property)) {
       return null;
-    }
-
-    if (target.hasOwnProperty(property)) {
-      return target[property];
     }
 
     try {
