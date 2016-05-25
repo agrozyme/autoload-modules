@@ -14,7 +14,7 @@
     "node": ">=6.0.0",
     "npm": ">=3.0.0"
   },
-  "author": "",
+  "author": "agrozyme <agrozyme@gmail.com> (https://github.com/agrozyme)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/agrozyme/autoload-modules/issues"
