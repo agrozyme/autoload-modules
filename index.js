@@ -10,8 +10,12 @@ module.exports = function(options) {
     }
   };
 
+  let isObject = function(item) {
+    return (null !== item) && ('object' === typeof item) && (false === (item instanceof Array));
+  };
+
   let setMapping = function(items) {
-    if (false === (items instanceof Object)) {
+    if (false === isObject(items)) {
       return;
     }
 
@@ -35,7 +39,7 @@ module.exports = function(options) {
   };
 
   let setOptions = function(items) {
-    if (false === (items instanceof Object)) {
+    if (false === isObject(items)) {
       return;
     }
 
