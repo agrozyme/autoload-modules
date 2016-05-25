@@ -1,16 +1,31 @@
 'use strict';
 
 module.exports = function(options) {
-  var useOptions = {debug: false, rename: {}};
+  var useOptions = {
+    guessName: function(name) {
+      return '';
+    }, mapping: {}
+  };
+
   var cache = {};
   var target = {};
   var handler = {};
 
+  var isObject = function(item) {
+    return (null !== item) && ('object' === typeof item);
+  };
+
   var setOptions = function(options) {
-    for (let name in useOptions) {
-      if (useOptions.hasOwnProperty(name) && options.hasOwnProperty(name)) {
-        useOptions[name] = options[name];
-      }
+    if (false === isObject(options)) {
+      return;
+    }
+
+    if (options.hasOwnProperty('guessName') && ('function' === typeof options.guessName)) {
+      useOptions.guessName = options.guessName;
+    }
+
+    if (options.hasOwnProperty('mapping') && isObject(options.mapping)) {
+      useOptions.mapping = options.mapping;
     }
   };
 
@@ -18,22 +33,26 @@ module.exports = function(options) {
     return name.trim().replace(/([a-z\d])([A-Z]+)/g, '$1-$2').replace(/[-\s]+/g, '-').toLowerCase();
   };
 
-  var debugMessage = function(error) {
-    var debug = useOptions.debug;
+  var getNames = function(name) {
+    let names = [name, packageName(name)];
 
-    if ('function' === typeof debug) {
-      debug(error);
-    }
+    try {
+      let guessName = useOptions.guessName(name);
 
-    if (debug) {
-      console.error(error);
+      if (('string' === typeof guessName) && ('' !== guessName)) {
+        names.push(guessName);
+      }
+
+      return names;
+    } catch (error) {
+      return names;
     }
   };
 
-  var getFromRename = function(target, property) {
-    const rename = useOptions.rename;
+  var getFromMapping = function(target, property) {
+    const items = useOptions.mapping;
 
-    if (false === rename.hasOwnProperty(property)) {
+    if (false === items.hasOwnProperty(property)) {
       return null;
     }
 
@@ -42,7 +61,7 @@ module.exports = function(options) {
     }
 
     try {
-      target[property] = require(rename[property]);
+      target[property] = require(items[property]);
       return target[property];
     } catch (error) {
       return null;
@@ -85,13 +104,13 @@ module.exports = function(options) {
       return cache[property];
     }
 
-    cache[property] = getFromRename(target, property);
+    cache[property] = getFromMapping(target, property);
 
     if (null !== cache[property]) {
       return cache[property];
     }
 
-    const names = [property, packageName(property)];
+    const names = getNames(property);
     cache[property] = getFromTarget(target, names);
 
     if (null !== cache[property]) {
@@ -105,10 +124,14 @@ module.exports = function(options) {
     }
 
     delete cache[property];
-    debugMessage(new Error("Cannot find module '" + property + "'"));
-    return undefined;
+    const error = new Error("Cannot find module '" + property + "'");
+    error.code = 'MODULE_NOT_FOUND';
+    throw error;
   };
 
   setOptions(options);
   return new Proxy(target, handler);
 };
+
+let $ = module.exports();
+console.log($.noextist);
