@@ -33,6 +33,7 @@ $.gulpUtil.log('Start');
 
 # 功能
 autoload-modules 會根據一個名稱陣列來猜測模組名稱並將其自動載入。
+
 會進行猜測的名稱最多有四個，依序為：mapping 名稱、屬性名稱、預設的轉換名稱、guessName 提供的轉換名稱。
 
 - mapping 名稱：以範例來說，就是 promise，請參考參數的 mapping 項目的說明。
@@ -42,12 +43,15 @@ autoload-modules 會根據一個名稱陣列來猜測模組名稱並將其自動
 
 # 參數
 require('autoload-modules')(options) 會傳回一個 Proxy 的物件實體。
+
 options 是非必填參數，目前提供的選項有以下幾個：
 
 - guessName: 一個字串轉換函數，輸入一個屬性名稱，傳回一個 require 模組的名稱。
 
 - mapping: 一個名稱對應的 Key-Value 物件。
+
   如果 Value 是一個字串，則會被當作第一順位的猜測名稱。
+
   如果 Value 是一個函數或物件，則會被直接指定為 Proxy 的屬性 (屬性名稱是 Key)
 
 
