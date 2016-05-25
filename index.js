@@ -129,6 +129,3 @@ module.exports = function(options) {
   setOptions(options);
   return new Proxy(target, handler);
 };
-
-let $ = module.exports();
-console.log($.noextist);
