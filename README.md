@@ -10,12 +10,12 @@
 - node.js 版本 6.0.0 以上
 
 # 安裝
-```Shell
+```sh
 npm install autoload-modules --save
 ```
 
 # 範例
-```JavaScript
+```js
 let $ = require('autoload-modules')({
   guessName: function(name) {
     return 'gulp-' + name;
