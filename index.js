@@ -11,7 +11,7 @@ module.exports = function(options) {
   var handler = {};
 
   var isObject = function(item) {
-    return (null !== item) && ('object' === typeof item);
+    return (null !== item) && ('object' === typeof item) && (false === Array.isArray(item));
   };
 
   var setMapping = function(items) {
