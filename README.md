@@ -36,9 +36,11 @@ autoload-modules 會根據一個名稱陣列來猜測模組名稱並將其自動
 
 會進行猜測的名稱最多有四個，依序為：mapping 名稱、屬性名稱、預設的轉換名稱、guessName 提供的轉換名稱。
 
-- mapping 名稱：以範例來說，就是 promise，請參考參數的 mapping 項目的說明。
+- mapping 名稱：請參考參數的 mapping 項目的說明。
 - 屬性名稱：以範例來說，就是 asyncawait，實際上會載入 asyncawait 模組。
-- 預設的轉換名稱：假設屬性名稱為一個駝峰式名稱，並將其轉換為小寫字母與連字號組合成的名稱。以範例來說，就是 gulpUtil，實際上會載入 gulp-util 模組。
+- 預設的轉換名稱：假設屬性名稱為一個駝峰式名稱，並將其轉換為小寫字母與連字號組合成的名稱。
+
+  以範例來說，就是 gulpUtil，實際上會載入 gulp-util 模組。
 - guessName 提供的轉換名稱：請參考參數的 guessName 項目的說明。
 
 # 參數
