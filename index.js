@@ -1,16 +1,16 @@
 'use strict';
 
 module.exports = function(options) {
-  var useOptions = {
-    guessName: function(name) {
+  let target = {};
+  let handler = {};
+
+  let useOptions = {
+    mapping: {}, guessName: function(name) {
       return '';
-    }, mapping: {}
+    }
   };
 
-  var target = {};
-  var handler = {};
-
-  var setMapping = function(items) {
+  let setMapping = function(items) {
     if (false === (items instanceof Object)) {
       return;
     }
@@ -34,7 +34,7 @@ module.exports = function(options) {
     });
   };
 
-  var setOptions = function(items) {
+  let setOptions = function(items) {
     if (false === (items instanceof Object)) {
       return;
     }
@@ -48,12 +48,12 @@ module.exports = function(options) {
     }
   };
 
-  var packageName = function(name) {
-    return name.trim().replace(/([a-z\d])([A-Z]+)/g, '$1-$2').replace(/[-\s]+/g, '-').toLowerCase();
+  let packageName = function(property) {
+    return property.trim().replace(/([a-z\d])([A-Z]+)/g, '$1-$2').replace(/[-\s]+/g, '-').toLowerCase();
   };
 
-  var getNames = function(property) {
-    const mapping = useOptions.mapping;
+  let getNames = function(property) {
+    let mapping = useOptions.mapping;
     let names = [];
 
     if (mapping.hasOwnProperty(property)) {
@@ -76,10 +76,10 @@ module.exports = function(options) {
     }
   };
 
-  var getRequire = function(names) {
+  let getRequire = function(property) {
     let value = null;
 
-    names.every(function(name) {
+    getNames(property).every(function(name) {
       try {
         value = require(name);
         return false;
@@ -91,20 +91,19 @@ module.exports = function(options) {
     return value;
   };
 
-  handler.get = function(target, property, receiver) {
+  handler.get = function(target, property) {
     if (target.hasOwnProperty(property)) {
       return target[property];
     }
 
-    const names = getNames(property);
-    target[property] = getRequire(names);
+    target[property] = getRequire(property);
 
     if (null !== target[property]) {
       return target[property];
     }
 
     delete target[property];
-    const error = new Error("Cannot find module '" + property + "'");
+    let error = new Error("Cannot find module '" + property + "'");
     error.code = 'MODULE_NOT_FOUND';
     throw error;
   };
