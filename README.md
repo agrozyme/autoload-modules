@@ -1,6 +1,11 @@
 # autoload-modules
 這是用來自動載入 node.js 的模組的模組。
 
+[![NPM](https://nodei.co/npm/autoload-modules.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/autoload-modules/)
+
+
+[![NPM](https://nodei.co/npm-dl/autoload-modules.png)](https://nodei.co/npm/autoload-modules/)
+
 # 簡介
 - 使用 ES6 的 Proxy 來 Lazy Load 模組。
 - 提供預先指定模組載入
