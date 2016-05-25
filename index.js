@@ -56,11 +56,19 @@ module.exports = function(options) {
     return name.trim().replace(/([a-z\d])([A-Z]+)/g, '$1-$2').replace(/[-\s]+/g, '-').toLowerCase();
   };
 
-  var getNames = function(name) {
-    let names = [name, packageName(name)];
+  var getNames = function(property) {
+    const mapping = useOptions.mapping;
+    let names = [];
+
+    if (mapping.hasOwnProperty(property)) {
+      names.push(mapping[property]);
+    }
+
+    names.push(property);
+    names.push(packageName(property));
 
     try {
-      let guessName = useOptions.guessName(name);
+      let guessName = useOptions.guessName(property);
 
       if (('string' === typeof guessName) && ('' !== guessName)) {
         names.push(guessName);
@@ -72,22 +80,7 @@ module.exports = function(options) {
     }
   };
 
-  var getFromMapping = function(target, property) {
-    const items = useOptions.mapping;
-
-    if (false === items.hasOwnProperty(property)) {
-      return null;
-    }
-
-    try {
-      target[property] = require(items[property]);
-      return target[property];
-    } catch (error) {
-      return null;
-    }
-  };
-
-  var getFromRequire = function(target, names) {
+  var getRequire = function(names) {
     let value = null;
 
     names.every(function(name) {
@@ -107,14 +100,8 @@ module.exports = function(options) {
       return target[property];
     }
 
-    target[property] = getFromMapping(target, property);
-
-    if (null !== target[property]) {
-      return target[property];
-    }
-
     const names = getNames(property);
-    target[property] = getFromRequire(target, names);
+    target[property] = getRequire(names);
 
     if (null !== target[property]) {
       return target[property];
