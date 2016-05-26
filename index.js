@@ -21,20 +21,23 @@ module.exports = function(options) {
 
     Object.keys(items).every(function(index) {
       let item = items[index];
+      let type = typeof item;
 
-      switch (typeof item) {
-        case 'string':
-          useOptions.mapping[index] = item;
-          break;
-
-        case 'object':
-        case 'function':
-          target[index] = item;
-          break;
-
-        default:
-          break;
+      if (null === item) {
+        return true;
       }
+
+      if ('string' === type) {
+        useOptions.mapping[index] = item;
+        return true;
+      }
+
+      if (('object' === type) || ('function' === type)) {
+        target[index] = item;
+        return true;
+      }
+      
+      return true;
     });
   };
 
