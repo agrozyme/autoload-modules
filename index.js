@@ -19,24 +19,22 @@ module.exports = function(options) {
       return;
     }
 
+    let allowed = {'string': true, 'object': false, 'function': false};
+
     Object.keys(items).every(function(index) {
       let item = items[index];
       let type = typeof item;
 
-      if (null === item) {
+      if ((null === item) || (false === allowed.hasOwnProperty(type))) {
         return true;
       }
 
-      if ('string' === type) {
+      if (allowed[type]) {
         useOptions.mapping[index] = item;
-        return true;
+      } else {
+        target[index] = item;
       }
 
-      if (('object' === type) || ('function' === type)) {
-        target[index] = item;
-        return true;
-      }
-      
       return true;
     });
   };
@@ -51,7 +49,7 @@ module.exports = function(options) {
     }
 
     if (items.hasOwnProperty('mapping')) {
-      setMapping(items.mapping);
+      setMapping(items.mapping)
     }
   };
 
