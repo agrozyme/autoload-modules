@@ -1,32 +1,31 @@
 'use strict';
 
 module.exports = function(options) {
+  let util = require('util');
+  let path = require('path');
+  let fs = require('fs');
   let target = {};
   let handler = {};
 
   let useOptions = {
-    mapping: {}, guessName: function(name) {
+    paths: [], mapping: {}, guessName: function(name) {
       return '';
     }
   };
 
-  let isObject = function(item) {
-    return (null !== item) && ('object' === typeof item) && (false === (item instanceof Array));
-  };
-
   let setMapping = function(items) {
-    if (false === isObject(items)) {
+    if (false === util.isObject(items)) {
       return;
     }
 
     let allowed = {'string': true, 'object': false, 'function': false};
 
-    Object.keys(items).every(function(index) {
+    Object.keys(items).forEach(function(index) {
       let item = items[index];
       let type = typeof item;
 
       if ((null === item) || (false === allowed.hasOwnProperty(type))) {
-        return true;
+        return;
       }
 
       if (allowed[type]) {
@@ -34,14 +33,32 @@ module.exports = function(options) {
       } else {
         target[index] = item;
       }
-
-      return true;
     });
   };
 
-  let setOptions = function(items) {
-    if (false === isObject(items)) {
+  let setPaths = function(items) {
+    if (false === util.isArray(items)) {
       return;
+    }
+
+    let data = {};
+
+    items.forEach(function(item) {
+      if (path.isAbsolute(item) && fs.existsSync(item)) {
+        data[item] = true;
+      }
+    });
+
+    useOptions.paths = Object.keys(data);
+  };
+
+  let setOptions = function(items) {
+    if (false === util.isObject(items)) {
+      return;
+    }
+
+    if (items.hasOwnProperty('paths')) {
+      setPaths(items.paths);
     }
 
     if (items.hasOwnProperty('guessName') && ('function' === typeof items.guessName)) {
@@ -59,32 +76,57 @@ module.exports = function(options) {
 
   let getNames = function(property) {
     let mapping = useOptions.mapping;
-    let names = [];
+    let items = {};
 
     if (mapping.hasOwnProperty(property)) {
-      names.push(mapping[property]);
+      items[mapping[property]] = true;
     }
 
-    names.push(property);
-    names.push(packageName(property));
+    items[property] = true;
+    items[packageName(property)] = true;
 
     try {
       let guessName = useOptions.guessName(property);
 
       if (('string' === typeof guessName) && ('' !== guessName)) {
-        names.push(guessName);
+        items[guessName] = true;
       }
 
-      return names;
+      return Object.keys(items);
     } catch (error) {
+      return Object.keys(items);
+    }
+  };
+
+  let buildNames = function(property) {
+    let names = getNames(property);
+    let items = {};
+
+    if (0 === useOptions.paths.length) {
       return names;
     }
+
+    names.forEach(function(name) {
+      if (path.isAbsolute(name)) {
+        items[name] = true;
+        return;
+      }
+
+      useOptions.paths.forEach(function(from) {
+        let longName = path.resolve(from, name);
+        items[longName] = true;
+      });
+
+      items[name] = true;
+    });
+
+    return Object.keys(items);
   };
 
   let getRequire = function(property) {
     let value = null;
 
-    getNames(property).every(function(name) {
+    buildNames(property).every(function(name) {
       try {
         value = require(name);
         return false;
@@ -116,3 +158,4 @@ module.exports = function(options) {
   setOptions(options);
   return new Proxy(target, handler);
 };
+

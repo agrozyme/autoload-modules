@@ -22,6 +22,7 @@ npm install autoload-modules --save
 # 範例
 ```js
 let $ = require('autoload-modules')({
+  paths: module.paths,
   guessName: function(name) {
     return 'gulp-' + name;
   },
@@ -53,6 +54,10 @@ require('autoload-modules')(options) 會傳回一個 Proxy 的物件實體。
 
 options 是非必填參數，目前提供的選項有以下幾個：
 
+- paths: 如果有某個模組在安裝時會有多個版本，可傳入一個絕對路徑目錄的陣列，程式會逐一嘗試載入。
+
+  使用上指定 module.paths 即可，為避免載入錯誤的版本，強烈建議一定要指定此參數。
+
 - guessName: 一個字串轉換函數，輸入一個屬性名稱，傳回一個 require 模組的名稱。
 
 - mapping: 一個名稱對應的 Key-Value 物件。
@@ -60,6 +65,8 @@ options 是非必填參數，目前提供的選項有以下幾個：
   如果 Value 是一個字串，則會被當作第一順位的猜測名稱。
 
   如果 Value 是一個函數或物件，則會被直接指定為 Proxy 的屬性 (屬性名稱是 Key)
+
+  如果 Value 不是字串、函數或物件，則會直接忽略。
 
 
 
