@@ -4,7 +4,7 @@ module.exports = (options) => {
   let util = require('util');
   let path = require('path');
   let fs = require('fs');
-  let useOptions = {paths: [], mapping: {}, guess: (name) => ''};
+  let useOptions = {paths: new Set(), mapping: {}, guess: (name) => ''};
   let target = {};
   let handler = {};
 
@@ -36,15 +36,11 @@ module.exports = (options) => {
       return;
     }
 
-    let data = new Set();
-
     items.forEach((item) => {
       if (path.isAbsolute(item) && fs.existsSync(item) && fs.statSync(item).isDirectory()) {
-        data.add(item);
+        useOptions.paths.add(item);
       }
     });
-
-    useOptions.paths = [...data];
   };
 
   let setOptions = (items) => {
@@ -87,9 +83,9 @@ module.exports = (options) => {
         items.add(guess);
       }
 
-      return [...items];
+      return items;
     } catch (error) {
-      return [...items];
+      return items;
     }
   };
 
@@ -114,13 +110,14 @@ module.exports = (options) => {
       items.add(name);
     });
 
-    return [...items];
+    return items;
   };
 
   let getRequire = (property) => {
     let value = null;
+    let names = buildNames(property);
 
-    buildNames(property).every((name) => {
+    [...names].every((name) => {
       try {
         value = require(name);
         return false;
