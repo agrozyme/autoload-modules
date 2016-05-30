@@ -23,7 +23,7 @@ npm install autoload-modules --save
 ```js
 let $ = require('autoload-modules')({
   paths: module.paths,
-  guessName: function(name) {
+  guess: function(name) {
     return 'gulp-' + name;
   },
   mapping: {
@@ -47,7 +47,7 @@ autoload-modules 會根據一個名稱陣列來猜測模組名稱並將其自動
 - 預設的轉換名稱：假設屬性名稱為一個駝峰式名稱，並將其轉換為小寫字母與連字號組合成的名稱。
 
   以範例來說，就是 gulpUtil，實際上會載入 gulp-util 模組。
-- guessName 提供的轉換名稱：請參考參數的 guessName 項目的說明。
+- guess 提供的轉換名稱：請參考參數的 guess 項目的說明。
 
 # 參數
 require('autoload-modules')(options) 會傳回一個 Proxy 的物件實體。
@@ -58,7 +58,7 @@ options 是非必填參數，目前提供的選項有以下幾個：
 
   使用上指定 module.paths 即可，為避免載入錯誤的版本，強烈建議一定要指定此參數。
 
-- guessName: 一個字串轉換函數，輸入一個屬性名稱，傳回一個 require 模組的名稱。
+- guess: 一個字串轉換函數，輸入一個屬性名稱，傳回一個 require 模組的名稱。
 
 - mapping: 一個名稱對應的 Key-Value 物件。
 
