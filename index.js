@@ -15,7 +15,7 @@ module.exports = (options) => {
 
     let allowed = {'string': true, 'object': false, 'function': false};
 
-    Object.keys(items).forEach(function(index) {
+    Object.keys(items).forEach((index) => {
       let item = items[index];
       let type = typeof item;
 
@@ -38,7 +38,7 @@ module.exports = (options) => {
 
     let data = new Set();
 
-    items.forEach(function(item) {
+    items.forEach((item) => {
       if (path.isAbsolute(item) && fs.existsSync(item) && fs.stat(item).isDirectory()) {
         data.add(item);
       }
@@ -78,14 +78,13 @@ module.exports = (options) => {
       items.add(mapping[property]);
     }
 
-    items.add(property);
-    items.add(packageName(property));
+    items.add(property).add(packageName(property));
 
     try {
-      let guessName = useOptions.guess(property);
+      let guess = useOptions.guess(property);
 
-      if (('string' === typeof guessName) && ('' !== guessName)) {
-        items.add(guessName);
+      if (('string' === typeof guess) && ('' !== guess)) {
+        items.add(guess);
       }
 
       return [...items];
@@ -102,13 +101,13 @@ module.exports = (options) => {
       return names;
     }
 
-    names.forEach(function(name) {
+    names.forEach((name) => {
       if (path.isAbsolute(name)) {
         items.add(name);
         return;
       }
 
-      useOptions.paths.forEach(function(from) {
+      useOptions.paths.forEach((from) => {
         items.add(path.resolve(from, name));
       });
 
@@ -121,7 +120,7 @@ module.exports = (options) => {
   let getRequire = (property) => {
     let value = null;
 
-    buildNames(property).every(function(name) {
+    buildNames(property).every((name) => {
       try {
         value = require(name);
         return false;
