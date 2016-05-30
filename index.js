@@ -39,7 +39,7 @@ module.exports = (options) => {
     let data = new Set();
 
     items.forEach((item) => {
-      if (path.isAbsolute(item) && fs.existsSync(item) && fs.stat(item).isDirectory()) {
+      if (path.isAbsolute(item) && fs.existsSync(item) && fs.statSync(item).isDirectory()) {
         data.add(item);
       }
     });
