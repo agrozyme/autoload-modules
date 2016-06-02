@@ -122,7 +122,11 @@ module.exports = (options) => {
         value = require(name);
         return false;
       } catch (error) {
-        return true;
+        if ('MODULE_NOT_FOUND' === error.code) {
+          return true;
+        }
+
+        throw error;
       }
     });
 
